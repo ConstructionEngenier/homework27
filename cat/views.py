@@ -1,5 +1,6 @@
 import json
 
+import pandas
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -8,6 +9,20 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView
 
 from cat.models import Category
+
+
+class AddCatData(View):
+    def get(self, request):
+        data_cat = pandas.read_csv('/Users/artem/Artems documents/Python/lesson27/homework27/data/categories.csv',
+                                   sep=',').to_dict()
+
+        i = 0
+        while max(data_cat['id'].keys()) > i:
+            cat = Category.objects.create(
+                name=data_cat["name"][i],
+            )
+            i += 1
+        return JsonResponse("Data upload successful", safe=False, status=200)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
